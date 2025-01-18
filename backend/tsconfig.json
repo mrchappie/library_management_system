@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2016", // Specify the target JavaScript version
+    "module": "commonjs", // CommonJS module system
+    "esModuleInterop": true, // Support for CommonJS modules
+    "forceConsistentCasingInFileNames": true, // Enforce consistent casing in file names
+
+    /* Type Checking */
+    "strict": true, // Enable all strict type-checking options
+    // "noImplicitAny": true, // Error on expressions/declarations with 'any' type
+    // "strictNullChecks": true, // Enable null and undefined type checks
+    // "noUnusedLocals": true, // Error on unused local variables
+    // "noUnusedParameters": true, // Error on unused function parameters
+    // "noImplicitReturns": true, // Error on functions with missing return paths
+    // "noFallthroughCasesInSwitch": true, // Error on fallthrough in switch statements
+
+    /* Module Resolution */
+    // "moduleResolution": "node", // Use Node.js module resolution
+    // "baseUrl": "./", // Base directory for non-relative module names
+    // "paths": {}, // Aliases for module paths
+
+    /* Emit */
+    // "declaration": true, // Generate .d.ts files
+    // "outDir": "./dist", // Output directory for compiled files
+    // "removeComments": true, // Remove comments from output
+
+    /* Completeness */
+    "skipLibCheck": true, // Skip type checking in .d.ts files
+    "typeRoots": ["./src/types"]
+  },
+  "include": ["src/**/*", "index.d.ts"], // Include all files in the 'src' directory and global declarations
+  "exclude": ["node_modules"] // Exclude the 'node_modules' directory
+}
