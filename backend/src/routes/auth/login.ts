@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
 import pool from '../../db';
 import jwt from 'jsonwebtoken';
+import { formatErrors } from './utils';
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.post(
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
+      res.status(400).json({ errors: formatErrors(errors.array()) });
       return;
     }
     try {
@@ -28,7 +29,9 @@ router.post(
       );
 
       if (existingUser.length === 0) {
-        res.status(401).json({ message: 'Invalid email' });
+        res
+          .status(400)
+          .json({ errors: { email: 'Invalid email or password' } });
         return;
       }
 
@@ -38,7 +41,9 @@ router.post(
       );
 
       if (!passwordMatch) {
-        res.status(401).json({ message: 'Invalid email or password' });
+        res
+          .status(400)
+          .json({ errors: { email: 'Invalid email or password' } });
         return;
       }
 

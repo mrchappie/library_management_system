@@ -3,12 +3,16 @@ import { ResultSetHeader } from 'mysql2';
 import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
 import pool from '../../db';
+import { formatErrors } from './utils';
 
 const router = Router();
 
 router.post(
   '/',
   [
+    body('name')
+      .isLength({ min: 3 })
+      .withMessage('Name must be at least 3 chars'),
     body('email').isEmail().withMessage('Must be a valid email'),
     body('password')
       .isLength({ min: 6 })
@@ -18,7 +22,10 @@ router.post(
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
+      const err = formatErrors(errors.array());
+      res.status(400).json({
+        errors: err,
+      });
       return;
     }
 
@@ -28,7 +35,7 @@ router.post(
     );
 
     if (isEmailUnique[0].length > 0) {
-      res.status(400).json({ message: 'Email is not valid' });
+      res.status(400).json({ errors: { email: 'Email is not valid' } });
       return;
     }
 
@@ -44,7 +51,10 @@ router.post(
         [user.name, user.email, user.password]
       );
 
-      res.status(200).json({ ...user, userID: result.insertId });
+      res.status(200).json({
+        message: 'User created successfully',
+        userID: result.insertId,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Database error' });
