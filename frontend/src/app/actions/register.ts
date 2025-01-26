@@ -23,7 +23,7 @@ export async function handleRegister(state: any, formData: any) {
     };
   }
 
-  const res = await fetch('http://localhost:4000/register', {
+  const res = await fetch('http://localhost:3002/register', {
     method: 'POST',
     body: JSON.stringify({
       name: validationResult.data.name,

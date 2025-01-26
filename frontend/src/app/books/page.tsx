@@ -1,7 +1,7 @@
 import BookCard from '../components/BookCard/BookCard';
 
 async function Books() {
-  const data = await fetch('http://localhost:3000/api/books', {
+  const data = await fetch('http://localhost:3001/api/books', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

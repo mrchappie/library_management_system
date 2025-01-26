@@ -50,7 +50,7 @@ router.post(
       const accessToken = jwt.sign(
         { email: req.body.email, uid: existingUser[0].client_id },
         process.env.JWT_SECRET as string,
-        { expiresIn: '1h' }
+        { expiresIn: '15m' }
       );
 
       const refreshToken = jwt.sign(
@@ -67,6 +67,22 @@ router.post(
       //     new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
       //   ]
       // );
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none',
+        maxAge: 15 * 60 * 1000,
+        path: '/',
+      });
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none',
+        maxAge: 5 * 24 * 60 * 60 * 1000,
+        path: '/',
+      });
 
       res
         .status(200)

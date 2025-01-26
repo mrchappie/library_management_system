@@ -1,5 +1,6 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const UserLoginSchema = z.object({
@@ -21,7 +22,7 @@ export async function handleLogin(state: any, formData: any) {
     };
   }
 
-  const res = await fetch('http://localhost:4000/login', {
+  const res = await fetch('http://localhost:3002/login', {
     method: 'POST',
     body: JSON.stringify({
       email: validationResult.data.email,
@@ -40,6 +41,10 @@ export async function handleLogin(state: any, formData: any) {
         password: err.errors.password || '',
       },
     };
+  }
+
+  if (res.ok) {
+    redirect('/');
   }
 
   return {

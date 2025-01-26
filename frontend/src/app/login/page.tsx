@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { handleLogin } from './actions';
+import { handleLogin } from '../actions/login';
 
 function Login() {
   const [state, action, pending] = useActionState(handleLogin, null);

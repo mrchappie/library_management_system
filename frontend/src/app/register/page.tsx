@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { handleRegister } from './actions';
+import { handleRegister } from '../actions/register';
 
 function Register() {
   const [state, action, pending] = useActionState(handleRegister, null);

@@ -1,3 +1,5 @@
+'use client';
+import handleLogout from '@/app/actions/logout';
 import Link from 'next/link';
 
 function Nav() {
@@ -14,6 +16,9 @@ function Nav() {
         <Link href="/account">
           <li className="p-4 hover:text-blue-500">Account</li>
         </Link>
+        <a onClick={handleLogout}>
+          <li className="p-4 hover:text-blue-500 cursor-pointer">Logut</li>
+        </a>
       </ul>
     </nav>
   );
