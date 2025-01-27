@@ -1,5 +1,6 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -31,6 +32,7 @@ export async function handleLogin(state: any, formData: any) {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   });
 
   if (!res.ok) {
@@ -44,14 +46,22 @@ export async function handleLogin(state: any, formData: any) {
   }
 
   if (res.ok) {
-    redirect('/');
+    const data = await res.json();
+    // console.log(data);
+    (await cookies()).set('accessToken', data.accessToken, {
+      httpOnly: true,
+      // sameSite: 'none',
+      // secure: false,
+      // maxAge: 15 * 60 * 1000,
+      maxAge: 15,
+    });
+    (await cookies()).set('refreshToken', data.refreshToken, {
+      httpOnly: true,
+      // sameSite: 'none',
+      // secure: false,
+      // maxAge: 30 * 60 * 1000,
+      maxAge: 30,
+    });
   }
-
-  return {
-    errors: {
-      email: '',
-      password: '',
-    },
-    body: res.body,
-  };
+  redirect('/');
 }

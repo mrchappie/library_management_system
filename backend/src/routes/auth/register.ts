@@ -16,7 +16,7 @@ router.post(
     body('email').isEmail().withMessage('Must be a valid email'),
     body('password')
       .isLength({ min: 6 })
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)
+      // .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)
       .withMessage('Password must be at least 6 characters long'),
   ],
   async (req: Request, res: Response) => {

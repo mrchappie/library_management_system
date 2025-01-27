@@ -6,64 +6,105 @@ import { RowDataPacket } from 'mysql2';
 
 const router = Router();
 
-router.post('/validate-token', async (req: Request, res: Response) => {
-  const accessToken = req.cookies.accessToken;
-  console.log(accessToken);
-  // const decodedValues = jwt.decode(accessToken) as User;
+const validateToken = (token: string, secret: string): any => {
+  try {
+    return jwt.verify(token, secret);
+  } catch (err: any) {
+    if (err.name === 'TokenExpiredError') {
+      return 'expired';
+    }
+    throw new Error('Invalid token');
+  }
+};
 
-  if (!accessToken) {
+router.post('/', async (req: Request, res: Response) => {
+  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!accessToken || !refreshToken) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
-  // const [rows] = await pool.query<RowDataPacket[]>(
-  //   'SELECT * FROM refresh_tokens WHERE user_id = ? AND NOT revoked',
-  //   [decodedValues.uid]
-  // );
-
-  // if (rows.length === 0) {
-  //   res.status(401).json({ message: 'Unauthorized' });
-  //   return;
-  // }
-
-  jwt.verify(
-    accessToken,
-    process.env.JWT_SECRET as string,
-    (err: any, decodedValue: any) => {
-      if (err) {
-        return res.status(403).json({ message: 'Unauthorized' });
-      }
-
-      const newAccessToken = jwt.sign(
-        { email: decodedValue.email, uid: decodedValue.uid },
-        process.env.JWT_SECRET as string,
-        {
-          expiresIn: '15m',
-        }
+  // Validate the refresh token
+  try {
+    const accessTokenDecoded = validateToken(
+      accessToken,
+      process.env.JWT_SECRET as string
+    );
+    if (accessTokenDecoded === 'expired') {
+      const refreshTokenDecoded = validateToken(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET as string
       );
 
-      console.log(newAccessToken);
+      if (refreshTokenDecoded === 'expired') {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      } else {
+        // Issue new tokens
+        const newAccessToken = jwt.sign(
+          { email: refreshTokenDecoded.email, uid: refreshTokenDecoded.uid },
+          process.env.JWT_SECRET as string,
+          { expiresIn: '15s' }
+        );
 
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'none',
-        maxAge: 15 * 60 * 1000,
-      });
+        const newRefreshToken = jwt.sign(
+          { email: refreshTokenDecoded.email, uid: refreshTokenDecoded.uid },
+          process.env.JWT_REFRESH_SECRET as string,
+          { expiresIn: '30s' }
+        );
 
-      res.status(200).json({ message: 'Token validated' });
+        // Set cookies
+        res.cookie('accessToken', newAccessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          maxAge: 15,
+        });
 
-      // res.status(200).json({
-      //   accessToken: jwt.sign(
-      //     { email: decodedValue.email, uid: decodedValue.uid },
-      //     process.env.JWT_SECRET as string,
-      //     {
-      //       expiresIn: '15m',
-      //     }
-      //   ),
-      // });
+        res.cookie('refreshToken', newRefreshToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'none',
+          maxAge: 30,
+        });
+
+        res.status(200).json({ message: 'Tokens refreshed' });
+        return;
+      }
+    } else {
+      res.status(200).json({ message: 'Access token is valid' });
+      return;
     }
-  );
+
+    // const [rows] = await pool.query<RowDataPacket[]>(
+    //   'SELECT * FROM refresh_tokens WHERE user_id = ? AND NOT revoked',
+    //   [decodedValues.uid]
+    // );
+
+    // if (rows.length === 0) {
+    //   res.status(401).json({ message: 'Unauthorized' });
+    //   return;
+    // }
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid token' });
+    return;
+  }
+
+  res.status(200).json({
+    message: 'Tokens refreshed successfully',
+  });
+
+  // res.status(200).json({
+  //   accessToken: jwt.sign(
+  //     { email: decodedValue.email, uid: decodedValue.uid },
+  //     process.env.JWT_SECRET as string,
+  //     {
+  //       expiresIn: '15m',
+  //     }
+  //   ),
+  // });
 });
 
 export default router;

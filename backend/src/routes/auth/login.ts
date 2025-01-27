@@ -50,13 +50,13 @@ router.post(
       const accessToken = jwt.sign(
         { email: req.body.email, uid: existingUser[0].client_id },
         process.env.JWT_SECRET as string,
-        { expiresIn: '15m' }
+        { expiresIn: '15s' }
       );
 
       const refreshToken = jwt.sign(
         { email: req.body.email, uid: existingUser[0].client_id },
         process.env.JWT_REFRESH_SECRET as string,
-        { expiresIn: '5d' }
+        { expiresIn: '30s' }
       );
 
       // await pool.query(
@@ -72,16 +72,14 @@ router.post(
         httpOnly: true,
         secure: false,
         sameSite: 'none',
-        maxAge: 15 * 60 * 1000,
-        path: '/',
+        maxAge: 15,
       });
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'none',
-        maxAge: 5 * 24 * 60 * 60 * 1000,
-        path: '/',
+        maxAge: 30,
       });
 
       res

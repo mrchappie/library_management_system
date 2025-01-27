@@ -9,7 +9,7 @@ const router = Router();
 router.delete('/', async (req: Request, res: Response) => {
   try {
     const accessToken = req.cookies.accessToken;
-    console.log(accessToken);
+    // console.log(accessToken);
     const decodedValues = jwt.decode(accessToken) as User;
 
     if (!accessToken) {
@@ -30,17 +30,8 @@ router.delete('/', async (req: Request, res: Response) => {
     // console.log('third');
 
     // Clear the cookie by setting it with an empty value and a past expiration date
-    res.clearCookie('accessToken', {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'none',
-    });
-
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'none',
-    });
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
 
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
