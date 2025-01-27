@@ -46,13 +46,13 @@ router.post('/', async (req: Request, res: Response) => {
         const newAccessToken = jwt.sign(
           { email: refreshTokenDecoded.email, uid: refreshTokenDecoded.uid },
           process.env.JWT_SECRET as string,
-          { expiresIn: '15s' }
+          { expiresIn: '1h' }
         );
 
         const newRefreshToken = jwt.sign(
           { email: refreshTokenDecoded.email, uid: refreshTokenDecoded.uid },
           process.env.JWT_REFRESH_SECRET as string,
-          { expiresIn: '30s' }
+          { expiresIn: '1h' }
         );
 
         // Set cookies
@@ -60,14 +60,14 @@ router.post('/', async (req: Request, res: Response) => {
           httpOnly: true,
           secure: false,
           sameSite: 'none',
-          maxAge: 15,
+          maxAge: 3600,
         });
 
         res.cookie('refreshToken', newRefreshToken, {
           httpOnly: true,
           secure: false,
           sameSite: 'none',
-          maxAge: 30,
+          maxAge: 3600,
         });
 
         res.status(200).json({ message: 'Tokens refreshed' });

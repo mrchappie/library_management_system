@@ -53,14 +53,21 @@ export async function handleLogin(state: any, formData: any) {
       // sameSite: 'none',
       // secure: false,
       // maxAge: 15 * 60 * 1000,
-      maxAge: 15,
+      maxAge: 3600,
     });
     (await cookies()).set('refreshToken', data.refreshToken, {
       httpOnly: true,
       // sameSite: 'none',
       // secure: false,
       // maxAge: 30 * 60 * 1000,
-      maxAge: 30,
+      maxAge: 3600,
+    });
+    (await cookies()).set('client_id', data.client_id, {
+      httpOnly: true,
+      // sameSite: 'none',
+      // secure: false,
+      // maxAge: 30 * 60 * 1000,
+      maxAge: 3600,
     });
   }
   redirect('/');

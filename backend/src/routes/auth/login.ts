@@ -50,13 +50,13 @@ router.post(
       const accessToken = jwt.sign(
         { email: req.body.email, uid: existingUser[0].client_id },
         process.env.JWT_SECRET as string,
-        { expiresIn: '15s' }
+        { expiresIn: '1h' }
       );
 
       const refreshToken = jwt.sign(
         { email: req.body.email, uid: existingUser[0].client_id },
         process.env.JWT_REFRESH_SECRET as string,
-        { expiresIn: '30s' }
+        { expiresIn: '1h' }
       );
 
       // await pool.query(
@@ -72,19 +72,31 @@ router.post(
         httpOnly: true,
         secure: false,
         sameSite: 'none',
-        maxAge: 15,
+        maxAge: 3600,
       });
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
         sameSite: 'none',
-        maxAge: 30,
+        maxAge: 3600,
+      });
+
+      res.cookie('client_id', existingUser[0].client_id, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none',
+        maxAge: 3600,
       });
 
       res
         .status(200)
-        .json({ message: 'Login successful', accessToken, refreshToken });
+        .json({
+          message: 'Login successful',
+          accessToken,
+          refreshToken,
+          client_id: existingUser[0].client_id,
+        });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Database error' });

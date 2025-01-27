@@ -50,7 +50,8 @@ router.get(
   async (req: Request, res: Response) => {
     try {
       const [rows] = await pool.query(
-        'SELECT * FROM borrowedbooks WHERE client_id = ?',
+        // 'SELECT * FROM borrowedbooks WHERE client_id = ?',
+        'SELECT borrowedbooks.id, books.title, borrowedbooks.return_date, borrowedbooks.borrow_date FROM borrowedbooks JOIN books ON borrowedbooks.book_id = books.id WHERE borrowedbooks.client_id = ?',
         [req.user?.uid]
       );
       res.status(200).json(rows);

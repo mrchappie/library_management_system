@@ -4,6 +4,7 @@ import booksRoute from './routes/books/books';
 import borrowBooksRoute from './routes/borrow/borrow';
 import returnBooksRoute from './routes/return/return';
 import overdueBooksRoute from './routes/overdue/overdue';
+import clientsRoute from './routes/clients/clients';
 import cookies from 'cookie-parser';
 import cors from 'cors';
 
@@ -36,3 +37,4 @@ app.use('/api/books', booksRoute);
 app.use('/api/borrow_book', borrowBooksRoute);
 app.use('/api/return_book', returnBooksRoute);
 app.use('/api/overdue_books', overdueBooksRoute);
+app.use('/api/clients', clientsRoute);
