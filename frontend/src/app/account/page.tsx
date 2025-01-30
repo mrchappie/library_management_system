@@ -9,8 +9,8 @@ async function Account({ clientId }: { clientId: number }) {
   const accessToken = cookieStore.get('accessToken');
   return (
     <div className="flex flex-col gap-4">
-      <ClientDetails clientId={clientIdCookie} />
-      <ClientBooks accessToken={accessToken?.value as string} />
+      {/* <ClientDetails clientId={clientIdCookie} /> */}
+      {/* <ClientBooks accessToken={accessToken?.value as string} /> */}
     </div>
   );
 }

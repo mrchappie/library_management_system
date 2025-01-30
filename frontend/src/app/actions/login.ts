@@ -53,7 +53,7 @@ export async function handleLogin(state: any, formData: any) {
       // sameSite: 'none',
       // secure: false,
       // maxAge: 15 * 60 * 1000,
-      maxAge: 3600,
+      maxAge: 15,
     });
     (await cookies()).set('refreshToken', data.refreshToken, {
       httpOnly: true,
